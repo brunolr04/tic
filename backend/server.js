@@ -23,6 +23,4 @@ app.use("/temblores", tembloresRutas);
 app.use("/configuracion", configuracionRutas);
 app.use("/usuarios", usuariosRutas);
 
-app.listen(3000, () => {
-    console.log("Servidor corriendo");
-});
+module.exports = app;
