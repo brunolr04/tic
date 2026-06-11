@@ -9,6 +9,12 @@ const app = express();
 
 app.use(cors());
 
+app.use(cors({
+  origin: 'https://tic-nine-sepia.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
+
 app.use(express.json());
 
 
