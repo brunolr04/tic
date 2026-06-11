@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000'
+const API_URL = 'https://tic-gqaw.vercel.app/'
 
 export const api = {
   login: async (correo, contrasena) => {

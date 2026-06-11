@@ -1,20 +1,24 @@
 const mysql = require("mysql2");
 
 const conexion = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "la_contra_de_tu_BDD",//yo ocupe mysql, pone la contraseña q te pide al instalar mysql
-    database: "zenit_glove_db" //el name q le puso el renato a la bdd
+    host: process.env.DB_HOST || "gateway01.us-east-1.prod.aws.tidbcloud.com",
+    port: process.env.DB_PORT || 4000,
+    user: process.env.DB_USER || "4WSwdnCgLc7HNNe.root",
+    password: process.env.DB_PASSWORD || "0QLelvgRWrDBE31g",
+    database: process.env.DB_DATABASE || "zenit_glove_db",
+    
+    ssl: {
+        minVersion: 'TLSv1.2',
+        rejectUnauthorized: true
+    }
 });
 
 conexion.connect((error) => {
-
     if (error) {
-        console.log("Error BD:", error);
+        console.log("Error al conectar a TiDB Cloud:", error);
         return;
     }
-
-    console.log("MySQL conectado");
+    console.log("¡Conexión exitosa a TiDB Cloud (MySQL) establecida!");
 });
 
 module.exports = conexion;
