@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const conexion = require("./db"); 
 
-const usuariosRutas = require("./rutas/usuarios.rutas");
+const usuariosRutas = require("./rutas/usuario.rutas");
 const tembloresRutas = require("./rutas/temblores.rutas");
 const configuracionRutas = require("./rutas/configuracion.rutas");
 
