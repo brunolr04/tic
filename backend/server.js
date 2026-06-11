@@ -7,22 +7,22 @@ const tembloresRutas = require("./rutas/temblores.rutas");
 const configuracionRutas = require("./rutas/configuracion.rutas");
 const app = express();
 
-app.use(cors());
-
-app.use(cors({
+const corsOptions = {
   origin: 'https://tic-nine-sepia.vercel.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
-}));
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
-
 
 app.use("/temblores", tembloresRutas);
 app.use("/configuracion", configuracionRutas);
 app.use("/usuarios", usuariosRutas);
 
 app.listen(3000, () => {
-
     console.log("Servidor corriendo");
 });
