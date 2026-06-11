@@ -1,10 +1,11 @@
 const express = require("express");
 const cors = require("cors");
-require("./db");
+const conexion = require("./db"); 
 
 const usuariosRutas = require("./rutas/usuarios.rutas");
 const tembloresRutas = require("./rutas/temblores.rutas");
 const configuracionRutas = require("./rutas/configuracion.rutas");
+
 const app = express();
 
 const corsOptions = {
@@ -22,5 +23,9 @@ app.use(express.json());
 app.use("/temblores", tembloresRutas);
 app.use("/configuracion", configuracionRutas);
 app.use("/usuarios", usuariosRutas);
+
+app.get("/status", (req, res) => {
+  res.status(200).json({ message: "Servidor operativo" });
+});
 
 module.exports = app;
