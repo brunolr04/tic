@@ -1,14 +1,14 @@
 const mysql = require("mysql2");
 
 const conexion = mysql.createConnection({
-    host: process.env.DB_HOST || "gateway01.us-east-1.prod.aws.tidbcloud.com",
-    port: process.env.DB_PORT || 4000,
-    user: process.env.DB_USER || "4WSwdnCgLc7HNNe.root",
-    password: process.env.DB_PASSWORD || "0QLelvgRWrDBE31g",
-    database: process.env.DB_DATABASE || "zenit_glove_db",
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
     
     ssl: {
-        minVersion: 'TLSv1.2',
+        ca: process.env.DB_CA,
         rejectUnauthorized: true
     }
 });
