@@ -5,7 +5,7 @@ const registrarUsuario = (req, res) => {
     conexion.query(
         `INSERT INTO usuario
         (nombre, correo, contrasena, edad, diagnostico)
-        VALUES (?, ?, ?, ?, ?)`,
+        VALUES ($1, $2, $3, $4, $5) RETURNING id_usuario`,
         [
             req.body.nombre,
             req.body.correo,
@@ -21,7 +21,7 @@ const registrarUsuario = (req, res) => {
 
             res.json({
                 mensaje: "Usuario registrado",
-                id: resultado.insertId
+                id: resultado.rows[0].id_usuario
             });
         }
     );
@@ -31,8 +31,8 @@ const loginUsuario = (req, res) => {
 
     conexion.query(
         `SELECT * FROM usuario
-        WHERE correo = ?
-        AND contrasena = ?`,
+        WHERE correo = $1
+        AND contrasena = $2`,
         [
             req.body.correo,
             req.body.contrasena
@@ -43,7 +43,7 @@ const loginUsuario = (req, res) => {
                 return res.status(500).json(error);
             }
 
-            if (resultados.length === 0) {
+            if (resultados.rows.length === 0) {
                 return res.status(401).json({
                     mensaje: "Correo o contraseña incorrectos"
                 });
@@ -51,7 +51,7 @@ const loginUsuario = (req, res) => {
 
             res.json({
                 mensaje: "Login correcto",
-                usuario: resultados[0]
+                usuario: resultados.rows[0]
             });
         }
     );

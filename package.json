@@ -1,6 +1,14 @@
 {
-  "dependencies": {
-    "dotenv": "^17.4.2",
-    "pg": "^8.21.0"
+  "name": "tic-project",
+  "version": "1.0.0",
+  "description": "Proyecto estructurado con Backend (Node.js) y Frontend (Vite)",
+  "scripts": {
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
   }
 }
