@@ -10,7 +10,7 @@ const obtenerConfiguracion = (req, res) => {
                 return res.status(500).json(error);
             }
 
-            res.json(resultados[0]);
+            res.json(resultados.rows[0]);
         }
     );
 };
@@ -19,8 +19,8 @@ const actualizarConfiguracion = (req, res) => {
 
     conexion.query(
         `UPDATE configuracion_guante
-         SET intensidad_vibracion = ?,
-             sensibilidad_sensor = ?
+         SET intensidad_vibracion = $1,
+             sensibilidad_sensor = $2
          WHERE id_guante = 1`,
         [
             req.body.intensidad_vibracion,

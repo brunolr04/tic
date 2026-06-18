@@ -1,31 +1,20 @@
-const mysql = require("mysql2");
+const { Pool } = require("pg");
+require("dotenv").config();
 
-
-const caCert = process.env.DB_CA ? process.env.DB_CA.replace(/\\n/g, '\n') : undefined;
-
-const dbConfig = {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT || 4000,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-    ssl: caCert ? {
-        ca: caCert,
-        rejectUnauthorized: true
-    } : null
-};
-
-
-const pool = mysql.createPool(dbConfig);
-
-
-pool.getConnection((err, connection) => {
-    if (err) {
-        console.error("Error al conectar a TiDB:", err.message);
-        return;
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
     }
-    console.log("¡Conexión exitosa a TiDB Cloud!");
-    connection.release();
 });
 
-module.exports = pool.promise();
+pool.connect((err, client, release) => {
+    if (err) {
+        console.error("Error al conectar a la base de datos:", err.stack);
+    } else {
+        console.log("¡Conexión exitosa a NEON!");
+    }
+    if (release) release();
+});
+
+module.exports = pool;
