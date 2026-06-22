@@ -5,6 +5,7 @@ const conexion = require("./db");
 const usuariosRutas = require("./rutas/usuario.rutas");
 const tembloresRutas = require("./rutas/temblores.rutas");
 const configuracionRutas = require("./rutas/configuracion.rutas");
+const guanteRutas = require("./rutas/guante.rutas");
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(express.json());
 app.use("/temblores", tembloresRutas);
 app.use("/configuracion", configuracionRutas);
 app.use("/usuarios", usuariosRutas);
+app.use("/guantes", guanteRutas);
 
 app.get("/status", (req, res) => {
   res.status(200).json({ message: "Servidor operativo" });
