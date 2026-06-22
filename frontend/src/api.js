@@ -1,6 +1,6 @@
 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:3000'
-  : 'https://tic-gqaw.vercel.app';
+  : 'https://tic-backend-7sfr.onrender.com';
 
 export const api = {
   login: async (correo, contrasena) => {
