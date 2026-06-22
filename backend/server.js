@@ -9,7 +9,13 @@ const configuracionRutas = require("./rutas/configuracion.rutas");
 const app = express();
 
 const corsOptions = {
-  origin: 'https://tic-nine-sepia.vercel.app',
+  origin: [
+    'https://tic-nine-sepia.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:3000'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -26,5 +32,12 @@ app.use("/usuarios", usuariosRutas);
 app.get("/status", (req, res) => {
   res.status(200).json({ message: "Servidor operativo" });
 });
+
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
+  });
+}
 
 module.exports = app;

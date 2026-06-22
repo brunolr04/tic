@@ -1,3 +1,9 @@
+try {
+    require("dotenv").config();
+} catch (e) {
+    // dotenv might not be installed in production
+}
+
 const mysql = require("mysql2");
 
 
@@ -28,4 +34,4 @@ pool.getConnection((err, connection) => {
     connection.release();
 });
 
-module.exports = pool.promise();
+module.exports = pool;

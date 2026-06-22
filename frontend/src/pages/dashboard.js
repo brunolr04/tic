@@ -111,7 +111,7 @@ export function renderDashboard(app) {
     canvas.height = 72 * devicePixelRatio
     ctx.scale(devicePixelRatio, devicePixelRatio)
   }
-  resizeCanvas()
+  setTimeout(resizeCanvas, 0)
   window.addEventListener('resize', resizeCanvas)
 
   function drawChart() {
@@ -228,5 +228,5 @@ export function renderDashboard(app) {
     }
   }
 
-  cargarConfig(); cargarUltima(); checkEstado(); drawChart()
+  cargarConfig(); cargarUltima(); checkEstado(); setTimeout(drawChart, 0)
 }

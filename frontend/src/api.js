@@ -1,4 +1,6 @@
-const API_URL = 'https://tic-gqaw.vercel.app'
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:3000'
+  : 'https://tic-gqaw.vercel.app';
 
 export const api = {
   login: async (correo, contrasena) => {
