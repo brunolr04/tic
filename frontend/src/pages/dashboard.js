@@ -1,5 +1,5 @@
-import { api }                       from '../api.js'
-import { auth }                      from '../auth.js'
+import { api } from '../api.js'
+import { auth } from '../auth.js'
 import { showToast, navHTML, iconSVG } from '../utils.js'
 
 export function renderDashboard(app) {
@@ -90,7 +90,7 @@ export function renderDashboard(app) {
             oninput="document.getElementById('lbl-sensibilidad').textContent=this.value">
         </div>
         <button class="btn btn-primary" id="btn-guardar" onclick="guardarConfig()">
-          ${iconSVG('<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>','color:var(--navy)')}
+          ${iconSVG('<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>', 'color:var(--navy)')}
           Guardar configuración
         </button>
       </div>
@@ -101,13 +101,13 @@ export function renderDashboard(app) {
 
   // ── Gráfica ───────────────────────────────────────────────
   const canvas = document.getElementById('rt-canvas')
-  const ctx    = canvas.getContext('2d')
+  const ctx = canvas.getContext('2d')
   const POINTS = 60
-  const data   = Array(POINTS).fill(0.5)
+  const data = Array(POINTS).fill(0.5)
   let ultimaHz = 0
 
   function resizeCanvas() {
-    canvas.width  = canvas.offsetWidth * devicePixelRatio
+    canvas.width = canvas.offsetWidth * devicePixelRatio
     canvas.height = 72 * devicePixelRatio
     ctx.scale(devicePixelRatio, devicePixelRatio)
   }
@@ -118,35 +118,35 @@ export function renderDashboard(app) {
     const W = canvas.offsetWidth, H = 72
     ctx.clearRect(0, 0, W, H)
     const step = W / (POINTS - 1)
-    ctx.beginPath(); ctx.setLineDash([3,3])
+    ctx.beginPath(); ctx.setLineDash([3, 3])
     ctx.strokeStyle = 'rgba(11,26,46,0.2)'; ctx.lineWidth = 1
-    ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke(); ctx.setLineDash([])
+    ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.stroke(); ctx.setLineDash([])
     ctx.beginPath()
-    data.forEach((v,i) => {
-      const x = i*step, y = H/2-(v-0.5)*(H*0.8)
-      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y)
+    data.forEach((v, i) => {
+      const x = i * step, y = H / 2 - (v - 0.5) * (H * 0.8)
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
     })
-    ctx.lineTo((POINTS-1)*step,H); ctx.lineTo(0,H); ctx.closePath()
-    const g = ctx.createLinearGradient(0,0,0,H)
-    g.addColorStop(0,'rgba(100,201,168,0.25)'); g.addColorStop(1,'rgba(100,201,168,0)')
-    ctx.fillStyle=g; ctx.fill()
-    ctx.beginPath(); ctx.strokeStyle='#64C9A8'; ctx.lineWidth=1.8; ctx.lineJoin='round'
-    data.forEach((v,i) => {
-      const x = i*step, y = H/2-(v-0.5)*(H*0.8)
-      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y)
+    ctx.lineTo((POINTS - 1) * step, H); ctx.lineTo(0, H); ctx.closePath()
+    const g = ctx.createLinearGradient(0, 0, 0, H)
+    g.addColorStop(0, 'rgba(100,201,168,0.25)'); g.addColorStop(1, 'rgba(100,201,168,0)')
+    ctx.fillStyle = g; ctx.fill()
+    ctx.beginPath(); ctx.strokeStyle = '#64C9A8'; ctx.lineWidth = 1.8; ctx.lineJoin = 'round'
+    data.forEach((v, i) => {
+      const x = i * step, y = H / 2 - (v - 0.5) * (H * 0.8)
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
     }); ctx.stroke()
   }
 
   function pushPoint(hz) {
-    const base  = Math.min(hz/12, 0.9)
-    const noise = (Math.random()-0.5)*0.15
-    data.shift(); data.push(Math.max(0.05, Math.min(0.95, 0.5+(base-0.3)+noise)))
+    const base = Math.min(hz / 12, 0.9)
+    const noise = (Math.random() - 0.5) * 0.15
+    data.shift(); data.push(Math.max(0.05, Math.min(0.95, 0.5 + (base - 0.3) + noise)))
     drawChart()
   }
 
   // idle animation
   let idleTimer = setInterval(() => {
-    const v = 0.5+Math.sin(Date.now()/600)*0.08+(Math.random()-0.5)*0.05
+    const v = 0.5 + Math.sin(Date.now() / 600) * 0.08 + (Math.random() - 0.5) * 0.05
     data.shift(); data.push(v); drawChart()
   }, 100)
 
@@ -170,10 +170,10 @@ export function renderDashboard(app) {
     try {
       const c = await api.obtenerConfiguracion()
       const si = c.intensidad_vibracion ?? 5
-      const ss = c.sensibilidad_sensor  ?? 5
-      document.getElementById('slider-intensidad').value  = si
+      const ss = c.sensibilidad_sensor ?? 5
+      document.getElementById('slider-intensidad').value = si
       document.getElementById('slider-sensibilidad').value = ss
-      document.getElementById('lbl-intensidad').textContent  = si
+      document.getElementById('lbl-intensidad').textContent = si
       document.getElementById('lbl-sensibilidad').textContent = ss
     } catch { document.getElementById('lbl-intensidad').textContent = '5'; document.getElementById('lbl-sensibilidad').textContent = '5' }
   }
@@ -184,13 +184,13 @@ export function renderDashboard(app) {
     try {
       await api.actualizarConfiguracion({
         intensidad_vibracion: parseInt(document.getElementById('slider-intensidad').value),
-        sensibilidad_sensor:  parseInt(document.getElementById('slider-sensibilidad').value)
+        sensibilidad_sensor: parseInt(document.getElementById('slider-sensibilidad').value)
       })
       showToast('✓ Configuración guardada')
     } catch { showToast('Error al guardar') }
     finally {
       btn.disabled = false
-      btn.innerHTML = `${iconSVG('<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>','color:var(--navy)')} Guardar configuración`
+      btn.innerHTML = `${iconSVG('<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>', 'color:var(--navy)')} Guardar configuración`
     }
   }
 
@@ -201,11 +201,11 @@ export function renderDashboard(app) {
       if (!list.length) return
       const t = list[0]
       const hz = parseFloat(t.frecuencia_hz)
-      document.getElementById('last-hz').textContent  = hz.toFixed(1)
+      document.getElementById('last-hz').textContent = hz.toFixed(1)
       document.getElementById('last-dur').textContent = t.duracion_segundos ?? '—'
       const vibEl = document.getElementById('last-vib')
-      vibEl.textContent  = t.vibracion_activada ? 'Activa' : 'Inactiva'
-      vibEl.style.color  = t.vibracion_activada ? 'var(--teal)' : 'rgba(255,255,255,0.4)'
+      vibEl.textContent = t.vibracion_activada ? 'Activa' : 'Inactiva'
+      vibEl.style.color = t.vibracion_activada ? 'var(--teal)' : 'rgba(255,255,255,0.4)'
       document.getElementById('val-frecuencia').textContent = hz.toFixed(1)
       document.getElementById('val-intensidad').textContent = t.intensidad ?? '—'
       document.getElementById('freq-val').textContent = hz.toFixed(1) + ' Hz'
@@ -217,14 +217,24 @@ export function renderDashboard(app) {
 
   async function checkEstado() {
     try {
-      await api.obtenerTemblores()
-      document.getElementById('status-dot').className   = 'status-dot pulse'
-      document.getElementById('status-label').textContent = 'Guante conectado · ESP32-GLOVE-01'
-      document.getElementById('status-label').className  = 'status-label'
+      const list = await api.obtenerTemblores()
+      const ahora = Date.now()
+      const hayReciente = list.length > 0 &&
+        (ahora - new Date(list[0].fecha_hora).getTime()) < 30000
+
+      if (hayReciente) {
+        document.getElementById('status-dot').className = 'status-dot pulse'
+        document.getElementById('status-label').textContent = 'Guante conectado · ESP32-GLOVE-01'
+        document.getElementById('status-label').className = 'status-label'
+      } else {
+        document.getElementById('status-dot').className = 'status-dot offline'
+        document.getElementById('status-label').textContent = 'Guante sin señal reciente'
+        document.getElementById('status-label').className = 'status-label offline'
+      }
     } catch {
-      document.getElementById('status-dot').className   = 'status-dot offline'
+      document.getElementById('status-dot').className = 'status-dot offline'
       document.getElementById('status-label').textContent = 'Sin conexión al servidor'
-      document.getElementById('status-label').className  = 'status-label offline'
+      document.getElementById('status-label').className = 'status-label offline'
     }
   }
 

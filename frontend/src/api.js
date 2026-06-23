@@ -1,6 +1,6 @@
 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:3000'
-  : 'https://tic-backend-7sfr.onrender.com';
+  : 'https://tic-backend-7sfr.onrender.com'
 
 export const api = {
   login: async (correo, contrasena) => {
@@ -23,8 +23,8 @@ export const api = {
     return res.json()
   },
 
-  obtenerTemblores: async () => {
-    const res = await fetch(`${API_URL}/temblores`)
+  obtenerTemblores: async (id_guante = 1) => {
+    const res = await fetch(`${API_URL}/temblores?id_guante=${id_guante}`)
     if (!res.ok) throw await res.json()
     return res.json()
   },
