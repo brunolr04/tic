@@ -156,8 +156,17 @@ export function renderAjustes(app) {
     finally { btn.disabled=false; btn.textContent='Guardar cambios' }
   }
 
-  // Estado ESP32
+  // Estado ESP32 — verifica si hay mediciones recientes (últimos 30 s)
   api.obtenerTemblores()
-    .then(()=>{ document.getElementById('val-esp').textContent='Conectado'; document.getElementById('val-esp').style.color='var(--teal)' })
+    .then(list => {
+      const el = document.getElementById('val-esp')
+      if (list.length > 0 && (Date.now() - new Date(list[0].fecha_hora).getTime()) < 30000) {
+        el.textContent = 'Conectado'
+        el.style.color = 'var(--teal)'
+      } else {
+        el.textContent = 'Sin señal reciente'
+        el.style.color = '#F59E0B'
+      }
+    })
     .catch(()=>{ document.getElementById('val-esp').textContent='Sin conexión'; document.getElementById('val-esp').style.color='var(--text-2)' })
 }

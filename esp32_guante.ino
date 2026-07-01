@@ -92,7 +92,9 @@ UMBRALES
 ==================================================
 */
 
-float UMBRAL = 3.5;
+// UMBRAL debe estar por encima de la gravedad basal del MPU6050 (~9.8 m/s²)
+// Con 3.5 el sensor detectaba "pico" constantemente sin temblor real
+float UMBRAL = 12.0;
 
 float HZ_MIN = 4.0;
 
@@ -560,11 +562,17 @@ activarMotores();
 
 
 
+// Normalizar intensidad a escala 1-10
+// Temblor mínimo detectable (UMBRAL=12 m/s²) → 1, temblor fuerte (~50 m/s²) → 10
+float intensidadNorm = (maxMagnitud - 12.0) / (50.0 - 12.0) * 9.0 + 1.0;
+if (intensidadNorm < 1.0) intensidadNorm = 1.0;
+if (intensidadNorm > 10.0) intensidadNorm = 10.0;
+
 enviarJSON(
 
 frecuencia,
 
-maxMagnitud*10,
+intensidadNorm,
 
 activar,
 

@@ -145,24 +145,22 @@ export function renderDashboard(app) {
     drawChart()
   }
 
-  // idle animation
-  let idleTimer = setInterval(() => {
-    const v = 0.5 + Math.sin(Date.now() / 600) * 0.08 + (Math.random() - 0.5) * 0.05
-    data.shift(); data.push(v); drawChart()
-  }, 100)
+  // idle — dibuja la línea base estática (sin animación)
+  let idleActive = true
+  function drawIdle() { drawChart() }
 
   // polling timer — una sola llamada cada 5s
   const pollTimer = setInterval(() => {
     actualizarDashboard()
   }, 5000)
 
-  const animTimer = setInterval(() => {
-    if (!idleTimer) pushPoint(ultimaHz)
-  }, 150)
+  // anim timer — solo activo cuando hay señal real
+  let animTimer = null
 
   // cleanup al abandonar la página
   window._cleanupDashboard = () => {
-    clearInterval(pollTimer); clearInterval(animTimer); clearInterval(idleTimer)
+    clearInterval(pollTimer)
+    if (animTimer) clearInterval(animTimer)
     window.removeEventListener('resize', resizeCanvas)
   }
 
@@ -227,21 +225,20 @@ export function renderDashboard(app) {
         if (t.id_medicion !== lastId) {
           lastId = t.id_medicion
           ultimaHz = hz
-          if (idleTimer) { clearInterval(idleTimer); idleTimer = null }
+          idleActive = false
+          if (!animTimer) {
+            animTimer = setInterval(() => { pushPoint(ultimaHz) }, 150)
+          }
           pushPoint(ultimaHz)
         }
       } else {
-        // Sin temblor activo → mostrar cero y volver a animación idle
+        // Sin temblor activo → detener animación, gráfico estático
         document.getElementById('val-frecuencia').textContent = '0.0'
         document.getElementById('val-intensidad').textContent = '0'
         document.getElementById('freq-val').textContent = '0.0 Hz'
         ultimaHz = 0
-        if (!idleTimer) {
-          idleTimer = setInterval(() => {
-            const v = 0.5 + Math.sin(Date.now() / 600) * 0.08 + (Math.random() - 0.5) * 0.05
-            data.shift(); data.push(v); drawChart()
-          }, 100)
-        }
+        idleActive = true
+        if (animTimer) { clearInterval(animTimer); animTimer = null }
       }
 
       // ── Última medición (siempre muestra el último registro histórico) ──
