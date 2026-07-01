@@ -215,27 +215,45 @@ export function renderDashboard(app) {
         document.getElementById('status-label').className = 'status-label offline'
       }
 
-      // ── Última medición ──
-      if (!list.length) return
-      const t = list[0]
-      const hz = parseFloat(t.frecuencia_hz)
+      // ── Métricas en tiempo real (solo si hay temblor activo) ──
+      if (hayReciente && list.length > 0) {
+        const t = list[0]
+        const hz = parseFloat(t.frecuencia_hz)
+        document.getElementById('val-frecuencia').textContent = hz.toFixed(1)
+        document.getElementById('val-intensidad').textContent = t.intensidad ?? '—'
+        document.getElementById('freq-val').textContent = hz.toFixed(1) + ' Hz'
 
-      document.getElementById('last-hz').textContent = hz.toFixed(1)
-      document.getElementById('last-dur').textContent = t.duracion_segundos ?? '—'
-      const vibEl = document.getElementById('last-vib')
-      vibEl.textContent = t.vibracion_activada ? 'Activa' : 'Inactiva'
-      vibEl.style.color = t.vibracion_activada ? 'var(--teal)' : 'rgba(255,255,255,0.4)'
-      document.getElementById('val-frecuencia').textContent = hz.toFixed(1)
-      document.getElementById('val-intensidad').textContent = t.intensidad ?? '—'
-      document.getElementById('freq-val').textContent = hz.toFixed(1) + ' Hz'
-
-      // Solo anima si llegó un registro nuevo
-      if (t.id_medicion !== lastId) {
-        lastId = t.id_medicion
-        ultimaHz = hz
-        if (idleTimer) { clearInterval(idleTimer); idleTimer = null }
-        pushPoint(ultimaHz)
+        // Solo anima si llegó un registro nuevo
+        if (t.id_medicion !== lastId) {
+          lastId = t.id_medicion
+          ultimaHz = hz
+          if (idleTimer) { clearInterval(idleTimer); idleTimer = null }
+          pushPoint(ultimaHz)
+        }
+      } else {
+        // Sin temblor activo → mostrar cero y volver a animación idle
+        document.getElementById('val-frecuencia').textContent = '0.0'
+        document.getElementById('val-intensidad').textContent = '0'
+        document.getElementById('freq-val').textContent = '0.0 Hz'
+        ultimaHz = 0
+        if (!idleTimer) {
+          idleTimer = setInterval(() => {
+            const v = 0.5 + Math.sin(Date.now() / 600) * 0.08 + (Math.random() - 0.5) * 0.05
+            data.shift(); data.push(v); drawChart()
+          }, 100)
+        }
       }
+
+      // ── Última medición (siempre muestra el último registro histórico) ──
+      if (!list.length) return
+      const ultimo = list[0]
+      const hzUltimo = parseFloat(ultimo.frecuencia_hz)
+      document.getElementById('last-hz').textContent = hzUltimo.toFixed(1)
+      document.getElementById('last-dur').textContent = ultimo.duracion_segundos ?? '—'
+      const vibEl = document.getElementById('last-vib')
+      vibEl.textContent = ultimo.vibracion_activada ? 'Activa' : 'Inactiva'
+      vibEl.style.color = ultimo.vibracion_activada ? 'var(--teal)' : 'rgba(255,255,255,0.4)'
+
     } catch {
       document.getElementById('status-dot').className = 'status-dot offline'
       document.getElementById('status-label').textContent = 'Sin conexión al servidor'
