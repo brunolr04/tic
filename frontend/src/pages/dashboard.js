@@ -105,6 +105,7 @@ export function renderDashboard(app) {
   const POINTS = 60
   const data = Array(POINTS).fill(0.5)
   let ultimaHz = 0
+  let lastId = null
 
   function resizeCanvas() {
     canvas.width = canvas.offsetWidth * devicePixelRatio
@@ -150,9 +151,9 @@ export function renderDashboard(app) {
     data.shift(); data.push(v); drawChart()
   }, 100)
 
-  // polling timer (guardarlo para limpiar al cambiar de ruta)
+  // polling timer — una sola llamada cada 5s
   const pollTimer = setInterval(() => {
-    cargarUltima(); checkEstado()
+    actualizarDashboard()
   }, 5000)
 
   const animTimer = setInterval(() => {
@@ -194,30 +195,12 @@ export function renderDashboard(app) {
     }
   }
 
-  // ── Última medición ───────────────────────────────────────
-  async function cargarUltima() {
+  // ── Actualizar dashboard (una sola llamada a la API por tick) ────────────
+  async function actualizarDashboard() {
     try {
       const list = await api.obtenerTemblores()
-      if (!list.length) return
-      const t = list[0]
-      const hz = parseFloat(t.frecuencia_hz)
-      document.getElementById('last-hz').textContent = hz.toFixed(1)
-      document.getElementById('last-dur').textContent = t.duracion_segundos ?? '—'
-      const vibEl = document.getElementById('last-vib')
-      vibEl.textContent = t.vibracion_activada ? 'Activa' : 'Inactiva'
-      vibEl.style.color = t.vibracion_activada ? 'var(--teal)' : 'rgba(255,255,255,0.4)'
-      document.getElementById('val-frecuencia').textContent = hz.toFixed(1)
-      document.getElementById('val-intensidad').textContent = t.intensidad ?? '—'
-      document.getElementById('freq-val').textContent = hz.toFixed(1) + ' Hz'
-      ultimaHz = hz
-      clearInterval(idleTimer); idleTimer = null
-      pushPoint(ultimaHz)
-    } catch { /* sin datos */ }
-  }
 
-  async function checkEstado() {
-    try {
-      const list = await api.obtenerTemblores()
+      // ── Estado del guante ──
       const ahora = Date.now()
       const hayReciente = list.length > 0 &&
         (ahora - new Date(list[0].fecha_hora).getTime()) < 30000
@@ -231,6 +214,28 @@ export function renderDashboard(app) {
         document.getElementById('status-label').textContent = 'Guante sin señal reciente'
         document.getElementById('status-label').className = 'status-label offline'
       }
+
+      // ── Última medición ──
+      if (!list.length) return
+      const t = list[0]
+      const hz = parseFloat(t.frecuencia_hz)
+
+      document.getElementById('last-hz').textContent = hz.toFixed(1)
+      document.getElementById('last-dur').textContent = t.duracion_segundos ?? '—'
+      const vibEl = document.getElementById('last-vib')
+      vibEl.textContent = t.vibracion_activada ? 'Activa' : 'Inactiva'
+      vibEl.style.color = t.vibracion_activada ? 'var(--teal)' : 'rgba(255,255,255,0.4)'
+      document.getElementById('val-frecuencia').textContent = hz.toFixed(1)
+      document.getElementById('val-intensidad').textContent = t.intensidad ?? '—'
+      document.getElementById('freq-val').textContent = hz.toFixed(1) + ' Hz'
+
+      // Solo anima si llegó un registro nuevo
+      if (t.id_medicion !== lastId) {
+        lastId = t.id_medicion
+        ultimaHz = hz
+        if (idleTimer) { clearInterval(idleTimer); idleTimer = null }
+        pushPoint(ultimaHz)
+      }
     } catch {
       document.getElementById('status-dot').className = 'status-dot offline'
       document.getElementById('status-label').textContent = 'Sin conexión al servidor'
@@ -238,5 +243,5 @@ export function renderDashboard(app) {
     }
   }
 
-  cargarConfig(); cargarUltima(); checkEstado(); setTimeout(drawChart, 0)
+  cargarConfig(); actualizarDashboard(); setTimeout(drawChart, 0)
 }

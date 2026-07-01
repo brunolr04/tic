@@ -134,7 +134,7 @@ export function renderHistorial(app) {
         <div class="empty">
           <svg class="empty-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           <p class="empty-title">Error de conexión</p>
-          <p class="empty-desc">Verifica que el backend esté activo en localhost:3000</p>
+          <p class="empty-desc">No se pudo conectar con el servidor. Intenta de nuevo.</p>
         </div>`
       document.getElementById('week-summary').innerHTML = ''
     }
